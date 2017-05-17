@@ -35,4 +35,4 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-//apply from:'../artifactoy_push.gradle'
+apply from:'../artifactoy_push.gradle'

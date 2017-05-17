@@ -1,6 +1,7 @@
 package com.wei.android.lib.fingerprintidentify;
 
 import android.app.Activity;
+import android.os.Build;
 
 import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint;
 import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint.FingerprintIdentifyExceptionListener;
@@ -42,12 +43,14 @@ public class FingerprintIdentify {
     }
 
     public FingerprintIdentify(Activity activity, FingerprintIdentifyExceptionListener exceptionListener) {
-        AndroidFingerprint androidFingerprint = new AndroidFingerprint(activity, exceptionListener);
-        if (androidFingerprint.isHardwareEnable()) {
-            mSubFingerprint = androidFingerprint;
-            if (androidFingerprint.isRegisteredFingerprint()) {
-                mFingerprint = androidFingerprint;
-                return;
+        if (!Build.BRAND.toLowerCase().contains("samsung")) {
+            AndroidFingerprint androidFingerprint = new AndroidFingerprint(activity, exceptionListener);
+            if (androidFingerprint.isHardwareEnable()) {
+                mSubFingerprint = androidFingerprint;
+                if (androidFingerprint.isRegisteredFingerprint()) {
+                    mFingerprint = androidFingerprint;
+                    return;
+                }
             }
         }
 
@@ -104,8 +107,8 @@ public class FingerprintIdentify {
     }
 
     public boolean isFingerDataChanged() {
-        if (mSubFingerprint ==null){
-            return false ;
+        if (mSubFingerprint == null) {
+            return false;
         }
         return mSubFingerprint.isFingerDataChange();
 
