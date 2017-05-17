@@ -37,6 +37,7 @@ public abstract class BaseFingerprint {
     private boolean mIsRegisteredFingerprint = false;       // if the phone has any fingerprints
     private boolean mIsCanceledIdentify = false;            // if canceled identify
     private boolean mIsCalledStartIdentify = false;         // if started identify
+    private boolean mIsFingerDataChange = false ;           // if fingerprint data change
 
     public BaseFingerprint(Activity activity, FingerprintIdentifyExceptionListener exceptionListener) {
         mActivity = activity;
@@ -218,6 +219,17 @@ public abstract class BaseFingerprint {
         mIsRegisteredFingerprint = registeredFingerprint;
     }
 
+    /**
+     *
+     * @return
+     */
+    public boolean isFingerDataChange() {
+        return mIsFingerDataChange ;
+    }
+
+    protected void setIsFingerDataChange(boolean isFingerDataChange){
+        mIsFingerDataChange = isFingerDataChange ;
+    }
     /**
      * identify callback
      */

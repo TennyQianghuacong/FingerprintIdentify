@@ -1,6 +1,9 @@
 package com.wei.android.lib.fingerprintidentify.impl;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import com.fingerprints.service.FingerprintManager;
 import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint;
@@ -29,18 +32,40 @@ import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint;
  * Created by Awei on 2017/2/9.
  */
 public class MeiZuFingerprint extends BaseFingerprint {
-
     private FingerprintManager mMeiZuFingerprintManager;
+    private final String KEY_FINGER = "KEY_FINGER";
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
 
     public MeiZuFingerprint(Activity activity, FingerprintIdentifyExceptionListener exceptionListener) {
         super(activity, exceptionListener);
-
+        sp = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
+        editor = sp.edit();
         try {
             mMeiZuFingerprintManager = FingerprintManager.open();
             if (mMeiZuFingerprintManager != null) {
                 setHardwareEnable(true);
                 int[] fingerprintIds = mMeiZuFingerprintManager.getIds();
                 setRegisteredFingerprint(fingerprintIds != null && fingerprintIds.length > 0);
+
+                String local_str = sp.getString(KEY_FINGER, "");
+                StringBuilder sb = new StringBuilder();
+                for (int i : fingerprintIds) {
+                    sb.append(i);
+                    sb.append("-");
+                }
+                String new_str = sb.toString();
+                editor.putString(KEY_FINGER, new_str);
+                editor.commit();
+                if (TextUtils.isEmpty(local_str)) {
+                    setIsFingerDataChange(false);
+                } else {
+                    if (local_str.equals(new_str)) {
+                        setIsFingerDataChange(false);
+                    } else {
+                        setIsFingerDataChange(true);
+                    }
+                }
             }
         } catch (Throwable e) {
             onCatchException(e);

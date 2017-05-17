@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 25
@@ -36,11 +35,4 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-publish {
-    userOrg = 'uccmawei'
-    groupId = 'com.wei.android.lib'
-    artifactId = 'fingerprintidentify'
-    publishVersion = '1.1.2'
-    desc = 'Android fingerprint api for Android, Samsung, MeiZu'
-    website = 'https://github.com/uccmawei/FingerprintIdentify'
-}
+//apply from:'../artifactoy_push.gradle'

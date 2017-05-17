@@ -7,3 +7,4 @@
 /build
 /captures
 .externalNativeBuild
+!/FingerprintIdentifyLib/src/main/java/com/wei/android/lib/fingerprintidentify/aosp/FingerprintManagerCompat.java

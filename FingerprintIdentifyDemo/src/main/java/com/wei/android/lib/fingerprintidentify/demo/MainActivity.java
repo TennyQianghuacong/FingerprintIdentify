@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         mTvTips.append("\nisHardwareEnable: " + mFingerprintIdentify.isHardwareEnable());
         mTvTips.append("\nisRegisteredFingerprint: " + mFingerprintIdentify.isRegisteredFingerprint());
         mTvTips.append("\nisFingerprintEnable: " + mFingerprintIdentify.isFingerprintEnable());
+        mTvTips.append("\n指纹数据改变： "+ mFingerprintIdentify.isFingerDataChanged());
 
         if (!mFingerprintIdentify.isFingerprintEnable()) {
             mTvTips.append("\nSorry →_→");
@@ -69,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
 
     @Override
     protected void onPause() {

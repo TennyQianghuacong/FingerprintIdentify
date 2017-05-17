@@ -1,10 +1,20 @@
 package com.wei.android.lib.fingerprintidentify.impl;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.hardware.fingerprint.FingerprintManager;
+import android.preference.PreferenceManager;
 import android.support.v4.os.CancellationSignal;
+import android.text.TextUtils;
 
 import com.wei.android.lib.fingerprintidentify.aosp.FingerprintManagerCompat;
 import com.wei.android.lib.fingerprintidentify.base.BaseFingerprint;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Copyright (c) 2017 Awei
@@ -33,16 +43,94 @@ public class AndroidFingerprint extends BaseFingerprint {
 
     private CancellationSignal mCancellationSignal;
     private FingerprintManagerCompat mFingerprintManagerCompat;
+    private final String KEY_FINGER = "KEY_FINGER_ADNROID";
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+
 
     public AndroidFingerprint(Activity activity, FingerprintIdentifyExceptionListener exceptionListener) {
         super(activity, exceptionListener);
+        sp = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
+        editor = sp.edit();
 
         try {
             mFingerprintManagerCompat = FingerprintManagerCompat.from(activity);
             setHardwareEnable(mFingerprintManagerCompat.isHardwareDetected());
             setRegisteredFingerprint(mFingerprintManagerCompat.hasEnrolledFingerprints());
+
+            getFingerData(activity);
+
         } catch (Throwable e) {
             onCatchException(e);
+        }
+    }
+
+    private void getFingerData(Activity activity) {
+        String local_str = sp.getString(KEY_FINGER,"");
+        FingerprintManager fingerprintManager = (FingerprintManager)activity.getSystemService(Context.FINGERPRINT_SERVICE);
+        try {
+            Class clz = Class.forName("android.hardware.fingerprint.FingerprintManager");
+            Method method = clz.getDeclaredMethod("getEnrolledFingerprints", new Class[]{});
+            method.setAccessible(true);
+            Object objs = method.invoke(fingerprintManager, null);
+            List<Object> list = (List<Object>) objs;
+            //本地
+            StringBuilder sb = new StringBuilder();
+            for (Object obj :list) {
+                getObjAttr(sb,obj);
+            }
+
+            String new_str = sb.toString();
+            editor.putString(KEY_FINGER, new_str);
+            editor.commit();
+            if (TextUtils.isEmpty(local_str)) {
+                setIsFingerDataChange(false);
+            } else {
+                if (local_str.equals(new_str)) {
+                    setIsFingerDataChange(false);
+                } else {
+                    setIsFingerDataChange(true);
+                }
+            }
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getObjAttr(StringBuilder sb, Object obj)
+    {
+        // 获取对象obj的所有属性域
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for (Field field : fields)
+        {
+            // 对于每个属性，获取属性名
+            String varName = field.getName();
+            try
+            {
+                boolean access = field.isAccessible();
+                if(!access) field.setAccessible(true);
+                //从obj中获取field变量
+                Object o = field.get(obj);
+                System.out.println("变量： " + varName + " = " + o);
+                if (!varName.equals("CREATOR")){
+                    System.out.println("变量： " + varName + " = " + o);
+                    sb.append(o);
+                    sb.append("-");
+                }
+
+                if(!access) field.setAccessible(false);
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
         }
     }
 

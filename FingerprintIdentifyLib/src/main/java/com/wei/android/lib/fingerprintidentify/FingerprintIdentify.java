@@ -102,4 +102,12 @@ public class FingerprintIdentify {
     public boolean isRegisteredFingerprint() {
         return isFingerprintEnable() || (mSubFingerprint != null && mSubFingerprint.isRegisteredFingerprint());
     }
+
+    public boolean isFingerDataChanged() {
+        if (mSubFingerprint ==null){
+            return false ;
+        }
+        return mSubFingerprint.isFingerDataChange();
+
+    }
 }

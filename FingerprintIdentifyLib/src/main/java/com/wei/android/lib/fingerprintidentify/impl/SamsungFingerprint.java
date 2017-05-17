@@ -1,6 +1,10 @@
 package com.wei.android.lib.fingerprintidentify.impl;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.SparseArray;
 
 import com.samsung.android.sdk.pass.Spass;
 import com.samsung.android.sdk.pass.SpassFingerprint;
@@ -33,18 +37,52 @@ public class SamsungFingerprint extends BaseFingerprint {
 
     private int mResultCode = -1;
     private SpassFingerprint mSpassFingerprint;
+    private final String KEY_FINGER = "KEY_FINGER_SAMSUNG";
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
 
     public SamsungFingerprint(Activity activity, FingerprintIdentifyExceptionListener exceptionListener) {
         super(activity, exceptionListener);
-
+        sp = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
+        editor = sp.edit();
         try {
             Spass spass = new Spass();
             spass.initialize(mActivity);
             mSpassFingerprint = new SpassFingerprint(activity);
             setHardwareEnable(spass.isFeatureEnabled(Spass.DEVICE_FINGERPRINT));
             setRegisteredFingerprint(mSpassFingerprint.hasRegisteredFinger());
+            mSpassFingerprint.getRegisteredFingerprintName();
+            getFingerData();
+
         } catch (Throwable e) {
             onCatchException(e);
+        }
+    }
+
+    /**
+     * 监听指纹数据是否改变
+     */
+    private void getFingerData() {
+        String local_str = sp.getString(KEY_FINGER,"");
+        String new_str = "";
+        try {
+            SparseArray sparseArray1 = mSpassFingerprint.getRegisteredFingerprintUniqueID() ;
+            new_str = sparseArray1.toString() ;
+        }catch (Exception e){
+
+        }
+        SparseArray sparseArray = mSpassFingerprint.getRegisteredFingerprintName();
+        new_str = new_str +  sparseArray.toString();
+        editor.putString(KEY_FINGER, new_str);
+        editor.commit();
+        if (TextUtils.isEmpty(local_str)) {
+            setIsFingerDataChange(false);
+        } else {
+            if (local_str.equals(new_str)) {
+                setIsFingerDataChange(false);
+            } else {
+                setIsFingerDataChange(true);
+            }
         }
     }
 
