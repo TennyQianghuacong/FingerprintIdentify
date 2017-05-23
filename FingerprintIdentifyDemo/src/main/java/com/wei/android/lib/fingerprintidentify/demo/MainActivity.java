@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSucceed() {
                 mTvTips.append("\nonSucceed");
-                mFingerprintIdentify.setChangeFingerData(false);
+                mFingerprintIdentify.setChangeFingerData(true);
             }
 
             @Override

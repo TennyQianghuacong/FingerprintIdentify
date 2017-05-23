@@ -79,6 +79,7 @@ public class SamsungFingerprint extends BaseFingerprint {
         mNewStr = mNewStr + sparseArray.toString();
         if (TextUtils.isEmpty(local_str)) {
             setIsFingerDataChange(false);
+            setChangeFingerData(true);
         } else {
             if (local_str.equals(mNewStr)) {
                 setIsFingerDataChange(false);

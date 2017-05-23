@@ -62,6 +62,7 @@ public class MeiZuFingerprint extends BaseFingerprint {
                 mNewStr = sb.toString();
                 if (TextUtils.isEmpty(local_str)) {
                     setIsFingerDataChange(false);
+                    setChangeFingerData(true);
                 } else {
                     if (local_str.equals(mNewStr)) {
                         setIsFingerDataChange(false);
