@@ -37,6 +37,11 @@ public class MeiZuFingerprint extends BaseFingerprint {
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
 
+    /**
+     * 新的指纹str
+     */
+    private String mNewStr;
+
     public MeiZuFingerprint(Activity activity, FingerprintIdentifyExceptionListener exceptionListener) {
         super(activity, exceptionListener);
         sp = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
@@ -54,13 +59,11 @@ public class MeiZuFingerprint extends BaseFingerprint {
                     sb.append(i);
                     sb.append("-");
                 }
-                String new_str = sb.toString();
-                editor.putString(KEY_FINGER, new_str);
-                editor.commit();
+                mNewStr = sb.toString();
                 if (TextUtils.isEmpty(local_str)) {
                     setIsFingerDataChange(false);
                 } else {
-                    if (local_str.equals(new_str)) {
+                    if (local_str.equals(mNewStr)) {
                         setIsFingerDataChange(false);
                     } else {
                         setIsFingerDataChange(true);
@@ -92,6 +95,15 @@ public class MeiZuFingerprint extends BaseFingerprint {
         } catch (Throwable e) {
             onCatchException(e);
             onFailed();
+        }
+    }
+
+    @Override
+    public void setChangeFingerData(boolean b) {
+        super.setChangeFingerData(b);
+        if (b) {
+            editor.putString(KEY_FINGER, mNewStr);
+            editor.commit();
         }
     }
 

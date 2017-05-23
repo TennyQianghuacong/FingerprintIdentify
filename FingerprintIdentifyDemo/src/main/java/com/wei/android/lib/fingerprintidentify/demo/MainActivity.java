@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         mTvTips.append("\nisRegisteredFingerprint: " + mFingerprintIdentify.isRegisteredFingerprint());
         mTvTips.append("\nisFingerprintEnable: " + mFingerprintIdentify.isFingerprintEnable());
         mTvTips.append("\n指纹数据改变： "+ mFingerprintIdentify.isFingerDataChanged());
-
         if (!mFingerprintIdentify.isFingerprintEnable()) {
             mTvTips.append("\nSorry →_→");
             return;
@@ -57,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSucceed() {
                 mTvTips.append("\nonSucceed");
+                mFingerprintIdentify.setChangeFingerData(false);
             }
 
             @Override

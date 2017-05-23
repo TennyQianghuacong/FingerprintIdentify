@@ -113,4 +113,8 @@ public class FingerprintIdentify {
         return mSubFingerprint.isFingerDataChange();
 
     }
+
+    public void setChangeFingerData(boolean b) {
+        mFingerprint.setChangeFingerData(b);
+    }
 }

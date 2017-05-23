@@ -38,7 +38,7 @@ public abstract class BaseFingerprint {
     private boolean mIsCanceledIdentify = false;            // if canceled identify
     private boolean mIsCalledStartIdentify = false;         // if started identify
     private boolean mIsFingerDataChange = false ;           // if fingerprint data change
-
+    private boolean mChangeFingerData = false  ;
     public BaseFingerprint(Activity activity, FingerprintIdentifyExceptionListener exceptionListener) {
         mActivity = activity;
         mExceptionListener = exceptionListener;
@@ -230,6 +230,11 @@ public abstract class BaseFingerprint {
     protected void setIsFingerDataChange(boolean isFingerDataChange){
         mIsFingerDataChange = isFingerDataChange ;
     }
+
+    public void setChangeFingerData(boolean b) {
+        mChangeFingerData = b ;
+    }
+
     /**
      * identify callback
      */

@@ -41,6 +41,11 @@ public class SamsungFingerprint extends BaseFingerprint {
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
 
+    /**
+     * 新的指纹str
+     */
+    private String mNewStr;
+
     public SamsungFingerprint(Activity activity, FingerprintIdentifyExceptionListener exceptionListener) {
         super(activity, exceptionListener);
         sp = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
@@ -63,22 +68,19 @@ public class SamsungFingerprint extends BaseFingerprint {
      * 监听指纹数据是否改变
      */
     private void getFingerData() {
-        String local_str = sp.getString(KEY_FINGER,"");
-        String new_str = "";
+        String local_str = sp.getString(KEY_FINGER, "");
         try {
-            SparseArray sparseArray1 = mSpassFingerprint.getRegisteredFingerprintUniqueID() ;
-            new_str = sparseArray1.toString() ;
-        }catch (Exception e){
+            SparseArray sparseArray1 = mSpassFingerprint.getRegisteredFingerprintUniqueID();
+            mNewStr = sparseArray1.toString();
+        } catch (Exception e) {
 
         }
         SparseArray sparseArray = mSpassFingerprint.getRegisteredFingerprintName();
-        new_str = new_str +  sparseArray.toString();
-        editor.putString(KEY_FINGER, new_str);
-        editor.commit();
+        mNewStr = mNewStr + sparseArray.toString();
         if (TextUtils.isEmpty(local_str)) {
             setIsFingerDataChange(false);
         } else {
-            if (local_str.equals(new_str)) {
+            if (local_str.equals(mNewStr)) {
                 setIsFingerDataChange(false);
             } else {
                 setIsFingerDataChange(true);
@@ -136,6 +138,15 @@ public class SamsungFingerprint extends BaseFingerprint {
                 }
             }
         });
+    }
+
+    @Override
+    public void setChangeFingerData(boolean b) {
+        super.setChangeFingerData(b);
+        if (b) {
+            editor.putString(KEY_FINGER, mNewStr);
+            editor.commit();
+        }
     }
 
     @Override
